@@ -1,0 +1,55 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+/* HERO SECTION */
+.hero {
+  height: 85vh;
+  background-image: url('https://images.unsplash.com/photo-1509099836639-18ba1795216d');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 123, 180, 0.7);
+}
+
+.hero-overlay {
+  position: relative;
+  z-index: 1;
+  color: white;
+  max-width: 600px;
+  padding: 80px;
+}
+
+.hero-overlay h1 {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+.hero-overlay h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.hero-overlay p {
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+/* INFO SECTION */
+.info-section {
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+mat-card {
+  max-width: 800px;
+  padding: 24px;
+  text-align: center;
+}

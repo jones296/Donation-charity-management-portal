@@ -1,0 +1,12 @@
+<!-- Top Navbar (HIDDEN only on Home Page) -->
+<mat-toolbar color="primary" *ngIf="!isHomePage()">
+  <span>Donation & Charity Management Portal</span>
+
+  <span class="spacer"></span>
+
+  <!-- Login link always visible when toolbar is shown -->
+  <a mat-button routerLink="/login">Login</a>
+</mat-toolbar>
+
+<!-- Main routed content -->
+<router-outlet></router-outlet>
