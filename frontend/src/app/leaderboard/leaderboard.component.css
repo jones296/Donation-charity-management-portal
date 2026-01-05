@@ -1,0 +1,93 @@
+/* PAGE */
+.leaderboard-page {
+  padding: 40px;
+  background: #f4f6f9;
+  min-height: calc(100vh - 80px);
+}
+
+/* HEADER */
+.leaderboard-header {
+  margin-bottom: 30px;
+}
+
+.leaderboard-header h2 {
+  font-size: 26px;
+  margin-bottom: 6px;
+}
+
+.leaderboard-header p {
+  color: #666;
+  font-size: 14px;
+}
+
+/* CARD */
+.leaderboard-card {
+  background: white;
+  border-radius: 14px;
+  padding: 20px;
+  max-width: 800px;
+  margin: auto;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead th {
+  text-align: left;
+  padding: 12px;
+  font-size: 14px;
+  color: #555;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+tbody td {
+  padding: 14px 12px;
+  font-size: 14px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* RANK BADGE */
+.rank-badge {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  text-align: center;
+  border-radius: 50%;
+  font-weight: 700;
+  background: #e0e0e0;
+}
+
+.rank-badge.first {
+  background: #ffd700;
+  color: #000;
+}
+
+.rank-badge.second {
+  background: #cfd8dc;
+}
+
+.rank-badge.third {
+  background: #ffe0b2;
+}
+
+/* NAME & COUNT */
+.donor-name {
+  font-weight: 600;
+}
+
+.donation-count {
+  font-weight: 700;
+  color: #2e7d32;
+}
+
+/* EMPTY */
+.empty-text {
+  text-align: center;
+  color: #777;
+  padding: 20px;
+}

@@ -1,27 +1,80 @@
-<h2>My Donation History</h2>
+<div class="dashboard-page">
 
-<table mat-table [dataSource]="contributions" class="mat-elevation-z2">
+  <!-- HEADER -->
+  <div class="dashboard-header">
+    <div>
+      <h2>Donor Dashboard</h2>
+      <p class="subtitle">
+        Track your contributions and donation impact
+      </p>
+    </div>
 
-  <ng-container matColumnDef="donation_id">
-    <th mat-header-cell *matHeaderCellDef>Donation ID</th>
-    <td mat-cell *matCellDef="let c">{{ c.donation_id }}</td>
-  </ng-container>
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </div>
 
-  <ng-container matColumnDef="quantity">
-    <th mat-header-cell *matHeaderCellDef>Quantity</th>
-    <td mat-cell *matCellDef="let c">{{ c.quantity }}</td>
-  </ng-container>
+  <!-- STATS -->
+  <div class="stats-container">
+    <div class="stat-card total">
+      <h3>Total Contributions</h3>
+      <p>{{ stats.total }}</p>
+    </div>
 
-  <ng-container matColumnDef="status">
-    <th mat-header-cell *matHeaderCellDef>Status</th>
-    <td mat-cell *matCellDef="let c">{{ c.status }}</td>
-  </ng-container>
+    <div class="stat-card pending">
+      <h3>Pending Pickups</h3>
+      <p>{{ stats.pending }}</p>
+    </div>
 
-  <ng-container matColumnDef="notes">
-    <th mat-header-cell *matHeaderCellDef>Notes</th>
-    <td mat-cell *matCellDef="let c">{{ c.notes }}</td>
-  </ng-container>
+    <div class="stat-card completed">
+      <h3>Completed</h3>
+      <p>{{ stats.completed }}</p>
+    </div>
+  </div>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
+  <!-- 📊 CHART -->
+  <div class="table-container">
+    <h3>Contribution Overview</h3>
+    <canvas id="donationChart" height="120"></canvas>
+  </div>
+
+  <!-- CONTRIBUTIONS LIST -->
+  <div class="table-container">
+    <h3>Your Contributions</h3>
+
+    <table *ngIf="!loading && contributions.length > 0">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Quantity</th>
+          <th>Location</th>
+          <th>Pickup Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let c of contributions">
+          <td>{{ c.donation_type }}</td>
+          <td>{{ c.quantity_or_amount }}</td>
+          <td>{{ c.location }}</td>
+          <td>{{ c.pickup_date_time | date:'mediumDate' }}</td>
+          <td>
+            <span
+              class="status-badge"
+              [ngClass]="{
+                pending: c.status !== 'COMPLETED',
+                completed: c.status === 'COMPLETED'
+              }"
+            >
+              {{ c.status }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="empty" *ngIf="!loading && contributions.length === 0">
+      You have not made any contributions yet.
+    </p>
+  </div>
+
+</div>

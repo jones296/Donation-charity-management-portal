@@ -6,27 +6,35 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ContributionService {
-  private apiUrl = 'http://localhost:3000/api/contributions';
+  private contributionUrl = 'http://localhost:3000/api/contributions';
+  private pickupUrl = 'http://localhost:3000/api/pickups';
 
   constructor(private http: HttpClient) {}
 
-  // Donor → Create contribution
-  createContribution(data: {
-    donor_id: number;
-    donation_id: number;
-    quantity_or_amount: number;
-    notes?: string;
-  }): Observable<any> {
-    return this.http.post(this.apiUrl, data);
+  // ---------------------------
+  // 1️⃣ Confirm Contribution
+  // ---------------------------
+  confirmContribution(donationId: number, quantity: number): Observable<any> {
+    return this.http.post(this.contributionUrl, {
+      donation_id: donationId,
+      quantity,
+    });
   }
 
-  // Donor → View contribution history
-  getDonorContributions(donorId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/donor/${donorId}`);
+  // ---------------------------
+  // 2️⃣ Schedule Pickup (MANDATORY)
+  // ---------------------------
+  schedulePickup(donationId: number, pickupDateTime: string): Observable<any> {
+    return this.http.post(this.pickupUrl, {
+      donation_id: donationId,
+      pickup_date_time: pickupDateTime,
+    });
   }
 
-  // NGO → View incoming contributions
-  getNgoContributions(ngoId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/ngo/${ngoId}`);
+  // ---------------------------
+  // DONOR → My Contributions
+  // ---------------------------
+  getMyContributions(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.contributionUrl}/my`);
   }
 }

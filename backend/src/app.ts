@@ -1,23 +1,38 @@
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
 
 // Routes
-import donationsRoutes from "./routes/donations.routes";
-import contributionsRoutes from "./routes/contributions.routes";
+import authRoutes from "./routes/auth.routes";
+import donationRoutes from "./routes/donations.routes";
+import contributionRoutes from "./routes/contributions.routes";
+import pickupRoutes from "./routes/pickups.routes";
+
+dotenv.config();
 
 const app = express();
 
-// Middleware
+// --------------------------------------------------
+// GLOBAL MIDDLEWARE
+// --------------------------------------------------
 app.use(cors());
 app.use(express.json());
 
-// Routes
-app.use("/api/donations", donationsRoutes);
-app.use("/api/contributions", contributionsRoutes);
+// --------------------------------------------------
+// API ROUTES
+// --------------------------------------------------
+app.use("/api/auth", authRoutes);
+app.use("/api/donations", donationRoutes);
+app.use("/api/contributions", contributionRoutes);
+app.use("/api/pickups", pickupRoutes);
 
-// Health check
-app.get("/", (req, res) => {
-  res.send("Donation & Charity Management Portal API running");
+// --------------------------------------------------
+// HEALTH CHECK (OPTIONAL BUT GOOD)
+// --------------------------------------------------
+app.get("/", (_req, res) => {
+  res.json({
+    message: "Donation & Charity Management API is running 🚀",
+  });
 });
 
 export default app;

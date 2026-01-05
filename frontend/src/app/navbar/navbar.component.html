@@ -1,0 +1,33 @@
+<nav class="navbar">
+  <!-- LEFT : BRAND -->
+  <div class="nav-left">
+    <a routerLink="/" class="brand">
+      ❤️ Donation Portal
+    </a>
+  </div>
+
+  <!-- RIGHT : MENU -->
+  <div class="nav-right">
+
+    <!-- 🔓 NOT LOGGED IN -->
+    <ng-container *ngIf="!isLoggedIn()">
+      <a routerLink="/login">Login</a>
+      <a routerLink="/register" class="btn-outline">Register</a>
+    </ng-container>
+
+    <!-- ❤️ DONOR MENU -->
+    <ng-container *ngIf="isLoggedIn() && isDonor()">
+      <a routerLink="/donations">Donations</a>
+      <a routerLink="/donor/dashboard">Dashboard</a>
+      <a routerLink="/leaderboard">Leaderboard</a>
+      <button class="btn-danger" (click)="logout()">Logout</button>
+    </ng-container>
+
+    <!-- 🏢 NGO MENU -->
+    <ng-container *ngIf="isLoggedIn() && isNgo()">
+      <a routerLink="/ngo/dashboard">NGO Dashboard</a>
+      <button class="btn-danger" (click)="logout()">Logout</button>
+    </ng-container>
+
+  </div>
+</nav>

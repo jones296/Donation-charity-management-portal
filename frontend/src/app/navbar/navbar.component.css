@@ -1,0 +1,92 @@
+/* NAVBAR BASE */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 14px 32px;
+  background: linear-gradient(90deg, #0f172a, #1e293b);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+/* BRAND */
+.brand {
+  font-size: 22px;
+  font-weight: 700;
+  color: #38bdf8;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+}
+
+.brand:hover {
+  color: #7dd3fc;
+}
+
+/* MENU */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.nav-right a {
+  color: #e5e7eb;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.nav-right a:hover {
+  color: #38bdf8;
+}
+
+/* BUTTONS */
+.btn-outline {
+  border: 1px solid #38bdf8;
+  padding: 6px 14px;
+  border-radius: 20px;
+  color: #38bdf8 !important;
+}
+
+.btn-outline:hover {
+  background: #38bdf8;
+  color: #0f172a !important;
+}
+
+/* LOGOUT BUTTON */
+.btn-danger {
+  background: #ef4444;
+  border: none;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+  transform: scale(1.05);
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 12px 18px;
+  }
+
+  .nav-right {
+    gap: 12px;
+  }
+
+  .brand {
+    font-size: 18px;
+  }
+}

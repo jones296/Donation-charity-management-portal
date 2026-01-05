@@ -1,28 +1,74 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './home/home.component';
-import { LoginComponent } from './login/login.component';
-import { DonorDashboardComponent } from './donor-dashboard/donor-dashboard.component';
-import { NgoDashboardComponent } from './ngo-dashboard/ngo-dashboard.component';
-import { authGuard } from './guards/auth.guard';
+import { AuthGuard } from './guards/auth.guard';
+import { DonorGuard } from './guards/donor.guard';
+import { NgoGuard } from './guards/ngo.guard';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
+  {
+    path: '',
+    loadComponent: () =>
+      import('./home/home.component').then((m) => m.HomeComponent),
+  },
 
-  { path: 'login', component: LoginComponent },
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./login/login.component').then((m) => m.LoginComponent),
+  },
 
+  {
+    path: 'register',
+    loadComponent: () =>
+      import('./register/register.component').then((m) => m.RegisterComponent),
+  },
+
+  // DONOR
+  {
+    path: 'donations',
+    canActivate: [AuthGuard, DonorGuard],
+    loadComponent: () =>
+      import('./donations/donation-list.component').then(
+        (m) => m.DonationListComponent
+      ),
+  },
+  {
+    path: 'contribute/:id',
+    canActivate: [AuthGuard, DonorGuard],
+    loadComponent: () =>
+      import('./contribute/contribute.component').then(
+        (m) => m.ContributeComponent
+      ),
+  },
   {
     path: 'donor/dashboard',
-    component: DonorDashboardComponent,
-    canActivate: [authGuard],
-    data: { role: 'DONOR' },
+    canActivate: [AuthGuard, DonorGuard],
+    loadComponent: () =>
+      import('./donor-dashboard/donor-dashboard.component').then(
+        (m) => m.DonorDashboardComponent
+      ),
+  },
+
+  // NGO
+  {
+    path: 'ngo/dashboard',
+    canActivate: [AuthGuard, NgoGuard],
+    loadComponent: () =>
+      import('./ngo-dashboard/ngo-dashboard.component').then(
+        (m) => m.NgoDashboardComponent
+      ),
+  },
+
+  // 🏆 LEADERBOARD (PUBLIC)
+  {
+    path: 'leaderboard',
+    loadComponent: () =>
+      import('./leaderboard/leaderboard.component').then(
+        (m) => m.LeaderboardComponent
+      ),
   },
 
   {
-    path: 'ngo/dashboard',
-    component: NgoDashboardComponent,
-    canActivate: [authGuard],
-    data: { role: 'NGO' },
+    path: '**',
+    redirectTo: '',
   },
-
-  { path: '**', redirectTo: '' },
 ];

@@ -1,0 +1,47 @@
+<div class="contribute-wrapper">
+
+  <!-- HEADER -->
+  <div class="contribute-header">
+    <h2>Confirm Your Contribution</h2>
+    <p>
+      Help an NGO by confirming the quantity and scheduling pickup.
+    </p>
+  </div>
+
+  <!-- CARD -->
+  <div class="contribute-card">
+
+    <!-- Quantity -->
+    <label class="field-label">Quantity / Amount</label>
+    <input
+      type="number"
+      min="1"
+      [(ngModel)]="quantity"
+      placeholder="Enter quantity"
+      class="input-box"
+    />
+
+    <!-- Pickup Date -->
+    <label class="field-label">Pickup Date & Time</label>
+    <input
+      type="datetime-local"
+      [(ngModel)]="pickupDateTime"
+      class="input-box"
+    />
+
+    <!-- Submit -->
+    <button
+      class="confirm-btn"
+      (click)="submitContribution()"
+      [disabled]="loading || !quantity || !pickupDateTime"
+    >
+      {{ loading ? 'Submitting...' : 'Confirm Contribution' }}
+    </button>
+
+    <p class="note">
+      Once confirmed, pickup will be scheduled with the NGO.
+    </p>
+
+  </div>
+
+</div>

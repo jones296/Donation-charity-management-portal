@@ -1,26 +1,53 @@
-<mat-toolbar color="primary">
-  <span>Donation & Charity Management Portal</span>
-  <span class="spacer"></span>
-  <button mat-button routerLink="/login">Login</button>
-</mat-toolbar>
+<!-- HERO SECTION -->
+<section class="hero page">
+  <div class="hero-content">
+    <h1>Every Child Deserves a Better Tomorrow</h1>
+    <p>
+      Your small contribution can bring food, clothes, and hope
+      to children and families in need.
+    </p>
 
-<div class="hero">
-  <div class="hero-overlay">
-    <h1>Donate Today</h1>
-    <h2>Help Change a Life</h2>
-    <p>Support NGOs by donating food, clothes, or funds to those in need.</p>
-    <button mat-raised-button color="accent" routerLink="/login">
+    <button class="hero-btn" (click)="donateNow()">
       Donate Now
     </button>
   </div>
-</div>
+</section>
 
-<div class="info-section">
-  <mat-card>
-    <h3>How It Works</h3>
-    <p>
-      NGOs post donation requests. Donors choose what to donate and schedule pickups.
-      Transparent tracking ensures every donation makes an impact.
-    </p>
-  </mat-card>
-</div>
+<!-- FEATURES -->
+<section class="features">
+  <h2>What We Do</h2>
+
+  <div class="feature-cards">
+    <div class="feature-card">
+      <h3>🍎 Food Support</h3>
+      <p>
+        Connect donors with NGOs to provide nutritious meals
+        to families and children.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <h3>👕 Clothing Donation</h3>
+      <p>
+        Donate clothes easily and help communities during
+        emergencies and hardships.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <h3>🤝 Trusted NGOs</h3>
+      <p>
+        All NGOs are verified to ensure transparency
+        and real impact.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>
+    © 2026 Donation & Charity Management Portal <br />
+    Built to make a difference ❤️
+  </p>
+</footer>

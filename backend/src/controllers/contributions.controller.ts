@@ -1,80 +1,110 @@
 import { Request, Response } from "express";
-import pool from "../config/db";
+import db from "../config/db";
 
 /**
- * POST /api/contributions
- * Donor creates a contribution
+ * Extend Express Request to include user (from JWT middleware)
  */
-export const createContribution = async (req: Request, res: Response) => {
-  try {
-    const { donor_id, donation_id, quantity_or_amount, notes } = req.body;
+interface AuthRequest extends Request {
+  user?: {
+    id: number;
+    role: string;
+  };
+}
 
-    if (!donor_id || !donation_id || !quantity_or_amount) {
-      return res.status(400).json({ message: "Missing required fields" });
+/**
+ * --------------------------------------------------
+ * DONOR → Confirm contribution
+ * --------------------------------------------------
+ */
+export const createContribution = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const [result]: any = await pool.query(
-      `INSERT INTO contributions 
-       (donor_id, donation_id, quantity, notes, status)
-       VALUES (?, ?, ?, ?, 'PENDING')`,
-      [donor_id, donation_id, quantity_or_amount, notes || null]
+    const donorId = req.user.id;
+    const { donation_id } = req.body;
+
+    if (!donation_id) {
+      return res.status(400).json({ message: "Donation ID is required" });
+    }
+
+    // Assign donor and mark donation as CONFIRMED
+    const [result]: any = await db.query(
+      `
+      UPDATE donations 
+      SET donor_id = ?, status = 'CONFIRMED'
+      WHERE id = ? AND donor_id IS NULL
+      `,
+      [donorId, donation_id]
     );
 
-    res.status(201).json({
-      message: "Contribution created successfully",
-      contributionId: result.insertId,
-    });
+    if (result.affectedRows === 0) {
+      return res
+        .status(400)
+        .json({ message: "Donation already confirmed or invalid ID" });
+    }
+
+    res.status(201).json({ message: "Contribution confirmed successfully" });
   } catch (error) {
-    console.error("Create Contribution Error:", error);
+    console.error("CREATE CONTRIBUTION ERROR:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
 /**
- * GET /api/contributions/donor/:donorId
- * Donor contribution history
+ * --------------------------------------------------
+ * DONOR → View my contributions
+ * --------------------------------------------------
  */
-export const getDonorContributions = async (req: Request, res: Response) => {
+export const getMyContributions = async (req: AuthRequest, res: Response) => {
   try {
-    const { donorId } = req.params;
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
-    const [rows] = await pool.query(
-      `SELECT c.*, d.donation_type, d.location
-       FROM contributions c
-       JOIN donations d ON c.donation_id = d.id
-       WHERE c.donor_id = ?
-       ORDER BY c.created_at DESC`,
+    const donorId = req.user.id;
+
+    const [rows] = await db.query(
+      `
+      SELECT *
+      FROM donations
+      WHERE donor_id = ?
+      ORDER BY created_at DESC
+      `,
       [donorId]
     );
 
-    res.json(rows);
+    res.status(200).json(rows);
   } catch (error) {
-    console.error("Get Donor Contributions Error:", error);
+    console.error("GET MY CONTRIBUTIONS ERROR:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
 /**
- * GET /api/contributions/ngo/:ngoId
- * NGO sees incoming contributions
+ * --------------------------------------------------
+ * PUBLIC → Leaderboard (Top donors)
+ * --------------------------------------------------
  */
-export const getNgoContributions = async (req: Request, res: Response) => {
+export const getLeaderboard = async (_req: Request, res: Response) => {
   try {
-    const { ngoId } = req.params;
-
-    const [rows] = await pool.query(
-      `SELECT c.*, u.name AS donor_name, d.donation_type
-       FROM contributions c
-       JOIN donations d ON c.donation_id = d.id
-       JOIN users u ON c.donor_id = u.id
-       WHERE d.ngo_id = ?
-       ORDER BY c.created_at DESC`,
-      [ngoId]
+    const [rows] = await db.query(
+      `
+      SELECT 
+        u.name,
+        COUNT(d.id) AS total_contributions
+      FROM users u
+      JOIN donations d ON d.donor_id = u.id
+      GROUP BY u.id
+      ORDER BY total_contributions DESC
+      LIMIT 10
+      `
     );
 
-    res.json(rows);
+    res.status(200).json(rows);
   } catch (error) {
-    console.error("Get NGO Contributions Error:", error);
+    console.error("LEADERBOARD ERROR:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
