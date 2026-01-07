@@ -22,8 +22,8 @@ export class DonorDashboardComponent implements OnInit {
 
   stats = {
     total: 0,
-    pending: 0,
-    completed: 0,
+    pending: 0, // CONFIRMED only
+    completed: 0, // COMPLETED only
   };
 
   private chart: Chart | null = null;
@@ -51,14 +51,19 @@ export class DonorDashboardComponent implements OnInit {
 
     this.contributionService.getMyContributions().subscribe({
       next: (data: any[]) => {
-        this.contributions = data;
+        // ❗ Donor should not see EXPIRED rows
+        this.contributions = data.filter((d) => d.status !== 'EXPIRED');
 
-        this.stats.total = data.length;
-        this.stats.completed = data.filter(
+        this.stats.total = this.contributions.length;
+
+        // 🟢 Green → only when NGO completed pickup
+        this.stats.completed = this.contributions.filter(
           (d) => d.status === 'COMPLETED'
         ).length;
-        this.stats.pending = data.filter(
-          (d) => d.status !== 'COMPLETED'
+
+        // 🟠 Pending → CONFIRMED (awaiting pickup)
+        this.stats.pending = this.contributions.filter(
+          (d) => d.status === 'CONFIRMED'
         ).length;
 
         this.loading = false;
@@ -88,7 +93,7 @@ export class DonorDashboardComponent implements OnInit {
         datasets: [
           {
             data: [this.stats.completed, this.stats.pending],
-            backgroundColor: ['#2e7d32', '#ffa726'],
+            backgroundColor: ['#2e7d32', '#ffa726'], // 🟢 🟠
             borderWidth: 0,
           },
         ],
