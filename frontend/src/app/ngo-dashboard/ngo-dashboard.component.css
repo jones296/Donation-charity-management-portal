@@ -1,4 +1,3 @@
-/* PAGE */
 .dashboard-page {
   background: #f4f6f9;
   min-height: calc(100vh - 80px);
@@ -15,29 +14,38 @@
   border-bottom: 1px solid #e0e0e0;
 }
 
-.dashboard-header h2 {
-  margin: 0;
-  font-size: 24px;
-}
-
 .subtitle {
   font-size: 14px;
   color: #666;
 }
 
-/* LOGOUT */
-.logout-btn {
-  padding: 8px 18px;
-  border: none;
-  background: #c62828;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
+.header-actions {
+  display: flex;
+  gap: 12px;
 }
 
-.logout-btn:hover {
-  background: #b71c1c;
+.create-btn {
+  background: #38bdf8;
+  color: #0f172a;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.create-btn:hover {
+  background: #0ea5e9;
+  transform: scale(1.05);
+}
+
+.logout-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
 }
 
 /* STATS */
@@ -56,28 +64,30 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
-.stat-card h3 {
-  font-size: 15px;
-  margin-bottom: 6px;
-  color: #555;
+.stat-card.total { border-top: 4px solid #38bdf8; }
+.stat-card.pending { border-top: 4px solid #f59e0b; }
+.stat-card.completed { border-top: 4px solid #22c55e; }
+
+/* 📊 CHART */
+.chart-container {
+  max-width: 420px;
+  margin: 30px auto;
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
+  text-align: center;
 }
 
-.stat-card p {
-  font-size: 28px;
-  font-weight: bold;
-  margin: 0;
+.chart-container h3 {
+  margin-bottom: 12px;
+  color: #0f172a;
 }
 
-.stat-card.pending {
-  border-top: 4px solid orange;
-}
-
-.stat-card.completed {
-  border-top: 4px solid green;
-}
-
-.stat-card.total {
-  border-top: 4px solid #1976d2;
+.chart-container:hover {
+  box-shadow: 0 14px 30px rgba(56, 189, 248, 0.35);
+  transform: translateY(-4px);
+  transition: all 0.3s ease;
 }
 
 /* TABLE */
@@ -89,29 +99,26 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
-.section-title {
-  margin-bottom: 16px;
-}
-
 table {
   width: 100%;
   border-collapse: collapse;
 }
 
 th {
-  text-align: left;
-  padding: 12px;
   background: #f5f7fa;
-  font-size: 14px;
+  padding: 12px;
 }
 
 td {
   padding: 12px;
   border-bottom: 1px solid #eee;
-  font-size: 14px;
 }
 
-/* STATUS BADGE */
+table tr:hover {
+  background: #f1f6ff;
+}
+
+/* STATUS */
 .status-badge {
   padding: 4px 10px;
   border-radius: 12px;
@@ -129,147 +136,37 @@ td {
   color: #2e7d32;
 }
 
-/* ACTION BUTTON */
 .complete-btn {
-  padding: 6px 14px;
-  border: none;
-  border-radius: 6px;
-  background: #2e7d32;
+  background: #22c55e;
   color: white;
-  font-size: 13px;
-  font-weight: 600;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
   cursor: pointer;
 }
 
-.complete-btn:hover {
-  background: #1b5e20;
-}
-
-/* COMPLETED TEXT */
 .completed-text {
   color: green;
   font-weight: 600;
+}
+
+/* 📱 MOBILE */
+@media (max-width: 768px) {
+  .stats-container {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-container {
+    max-width: 90%;
+  }
+}
+.status-badge.expired {
+  background: #fdecea;
+  color: #b71c1c;
+}
+
+.expired-text {
+  color: #b71c1c;
+  font-weight: 600;
   font-size: 13px;
 }
-
-/* EMPTY */
-.empty {
-  text-align: center;
-  color: #777;
-  margin-top: 20px;
-}
-.card,
-.stat-card,
-.table-container {
-  background: #ffffff;
-  border-radius: 14px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-}
-
-.card:hover,
-.stat-card:hover,
-.table-container:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 14px 28px rgba(0,0,0,0.15);
-}
-table tr:hover {
-  background-color: #f1f6ff;
-}
-.status {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.status.pending {
-  background: #fff3e0;
-  color: #ef6c00;
-}
-
-.status.confirmed {
-  background: #e3f2fd;
-  color: #1976d2;
-}
-
-.status.completed {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-.page,
-.dashboard,
-.contribute-wrapper {
-  animation: fadeIn 0.5s ease-in;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ===============================
-   UI POLISH – NGO DASHBOARD
-================================ */
-
-/* Card polish */
-.stat-card,
-.table-container {
-  background: #ffffff;
-  border-radius: 14px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-/* Hover effect */
-.stat-card:hover,
-.table-container:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.15);
-}
-
-/* Table row hover */
-table tr:hover {
-  background-color: #f1f6ff;
-}
-
-/* Buttons */
-button {
-  cursor: pointer;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-button:hover {
-  transform: scale(1.04);
-  opacity: 0.95;
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Fade-in animation */
-.ngo-dashboard,
-.table-container,
-.stats-container {
-  animation: fadeIn 0.45s ease-in;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-

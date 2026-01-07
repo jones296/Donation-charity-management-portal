@@ -30,13 +30,15 @@
     </div>
   </div>
 
-  <!-- 📊 CHART -->
-  <div class="table-container">
+  <!-- CHART -->
+  <div class="chart-container" *ngIf="!loading && stats.total > 0">
     <h3>Contribution Overview</h3>
-    <canvas id="donationChart" height="120"></canvas>
+    <div class="chart-wrapper">
+      <canvas id="donationChart"></canvas>
+    </div>
   </div>
 
-  <!-- CONTRIBUTIONS LIST -->
+  <!-- TABLE -->
   <div class="table-container">
     <h3>Your Contributions</h3>
 
@@ -54,9 +56,13 @@
       <tbody>
         <tr *ngFor="let c of contributions">
           <td>{{ c.donation_type }}</td>
-          <td>{{ c.quantity_or_amount }}</td>
+
+          <!-- ✅ FIXED HERE -->
+          <td>{{ c.quantity }}</td>
+
           <td>{{ c.location }}</td>
-          <td>{{ c.pickup_date_time | date:'mediumDate' }}</td>
+          <td>{{ c.pickup_date_time | date:'medium' }}</td>
+
           <td>
             <span
               class="status-badge"

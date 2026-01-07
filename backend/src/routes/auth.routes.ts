@@ -1,12 +1,31 @@
 import { Router } from "express";
-import { login, register } from "../controllers/auth.controller";
+import {
+  register,
+  login,
+  forgotPassword,
+  adminReactivateUser,
+} from "../controllers/auth.controller";
+
+// ✅ Named imports (VERY IMPORTANT)
+import { authenticate, authorize } from "../middleware/auth.middleware";
 
 const router = Router();
 
-// Register (Donor / NGO)
+// -------------------------
+// PUBLIC ROUTES
+// -------------------------
 router.post("/register", register);
-
-// Login
 router.post("/login", login);
+router.post("/forgot-password", forgotPassword);
+
+// -------------------------
+// ADMIN ROUTE (DEMO ONLY)
+// -------------------------
+router.post(
+  "/admin/reactivate",
+  authenticate,
+  authorize(["ADMIN"]),
+  adminReactivateUser
+);
 
 export default router;

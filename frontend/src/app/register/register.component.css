@@ -1,27 +1,68 @@
+/* CENTER PAGE */
 .register-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: #f5f5f5;
+  min-height: calc(100vh - 80px); /* below navbar */
+  background-color: #f5f7fb;
 }
 
-mat-card {
+/* CARD */
+.register-card {
   width: 400px;
-  padding: 20px;
+  padding: 24px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  animation: fadeIn 0.4s ease-in;
 }
 
-.full-width {
-  width: 100%;
-  margin-bottom: 15px;
-}
-
-h2 {
+/* TITLE */
+.register-card h2 {
   text-align: center;
   margin-bottom: 20px;
 }
 
+/* INPUTS */
+.full-width {
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+/* ERROR MESSAGE */
+.error {
+  color: #d32f2f;
+  text-align: center;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* LOGIN LINK */
 .login-link {
   text-align: center;
-  margin-top: 15px;
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.login-link a {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+/* FADE IN */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

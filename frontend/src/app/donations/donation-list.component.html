@@ -11,50 +11,72 @@
     Loading donation requests...
   </p>
 
-  <!-- EMPTY -->
+  <!-- EMPTY STATE -->
   <p *ngIf="!loading && donations.length === 0" class="empty-text">
     No donation requests available right now.
   </p>
 
-  <!-- LIST -->
+  <!-- DONATION LIST -->
   <div class="card-grid" *ngIf="!loading && donations.length > 0">
+
     <div class="donation-card" *ngFor="let d of donations">
 
-      <!-- LEFT -->
+      <!-- LEFT SECTION -->
       <div class="card-left">
         <h3>{{ d.donation_type }}</h3>
 
-        <p><strong>Quantity / Amount:</strong> {{ d.quantity_or_amount }}</p>
-        <p><strong>Location:</strong> {{ d.location }}</p>
+        <!-- TOTAL vs REMAINING (SAFE) -->
         <p>
-          <strong>Pickup Date:</strong>
-          {{ d.pickup_date_time | date:'mediumDate' }}
+          <strong>Quantity:</strong>
+          {{ d.remaining_quantity ?? d.quantity_or_amount }}
+          /
+          {{ d.quantity_or_amount }}
         </p>
 
+        <p>
+          <strong>Location:</strong>
+          {{ d.location }}
+        </p>
+
+        <p>
+          <strong>Pickup Date:</strong>
+          {{ d.pickup_date_time | date:'medium' }}
+        </p>
+
+        <!-- STATUS (SAFE) -->
         <span
           class="status"
-          [class.pending]="d.status === 'PENDING'"
-          [class.completed]="d.status !== 'PENDING'"
+          [class.pending]="(d.remaining_quantity ?? d.quantity_or_amount) > 0"
+          [class.completed]="(d.remaining_quantity ?? d.quantity_or_amount) === 0"
         >
-          {{ d.status }}
+          {{
+            (d.remaining_quantity ?? d.quantity_or_amount) > 0
+              ? 'OPEN'
+              : 'COMPLETED'
+          }}
         </span>
       </div>
 
-      <!-- RIGHT -->
+      <!-- RIGHT SECTION -->
       <div class="card-right">
-        <!-- SHOW BUTTON ONLY IF PENDING -->
+
+        <!-- CAN STILL DONATE -->
         <button
-          *ngIf="d.status === 'PENDING'"
+          *ngIf="(d.remaining_quantity ?? d.quantity_or_amount) > 0"
           class="contribute-btn"
           (click)="contribute(d.id)"
         >
           Contribute
         </button>
 
-        <!-- ALREADY CONFIRMED -->
-        <span *ngIf="d.status !== 'PENDING'" class="already-taken">
-          Already Confirmed
+        <!-- FULLY DONATED -->
+        <span
+          *ngIf="(d.remaining_quantity ?? d.quantity_or_amount) === 0"
+          class="already-taken"
+        >
+          Fully Contributed
         </span>
+
       </div>
 
     </div>

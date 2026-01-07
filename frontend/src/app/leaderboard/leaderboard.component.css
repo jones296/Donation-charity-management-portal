@@ -91,3 +91,33 @@ tbody td {
   color: #777;
   padding: 20px;
 }
+
+/* 🌟 QUOTE SECTION */
+.quote-section {
+  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+}
+
+.quote-card {
+  max-width: 800px;
+  background: linear-gradient(135deg, #fff7e6, #fff);
+  border-left: 6px solid #ffb300;
+  border-radius: 12px;
+  padding: 28px 32px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.quote-text {
+  font-size: 18px;
+  font-style: italic;
+  color: #444;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.quote-subtext {
+  font-size: 14px;
+  color: #777;
+  text-align: right;
+}

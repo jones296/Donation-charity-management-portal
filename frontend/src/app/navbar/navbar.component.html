@@ -1,31 +1,38 @@
 <nav class="navbar">
   <!-- LEFT : BRAND -->
   <div class="nav-left">
-    <a routerLink="/" class="brand">
+    <a routerLink="/" class="brand" (click)="closeMenu()">
       ❤️ Donation Portal
     </a>
   </div>
 
+  <!-- ☰ MOBILE TOGGLE -->
+  <div class="menu-toggle" (click)="toggleMenu()">
+    ☰
+  </div>
+
   <!-- RIGHT : MENU -->
-  <div class="nav-right">
+  <div class="nav-right" [class.open]="menuOpen">
 
     <!-- 🔓 NOT LOGGED IN -->
     <ng-container *ngIf="!isLoggedIn()">
-      <a routerLink="/login">Login</a>
-      <a routerLink="/register" class="btn-outline">Register</a>
+      <a routerLink="/login" (click)="closeMenu()">Login</a>
+      <a routerLink="/register" class="btn-outline" (click)="closeMenu()">
+        Register
+      </a>
     </ng-container>
 
     <!-- ❤️ DONOR MENU -->
     <ng-container *ngIf="isLoggedIn() && isDonor()">
-      <a routerLink="/donations">Donations</a>
-      <a routerLink="/donor/dashboard">Dashboard</a>
-      <a routerLink="/leaderboard">Leaderboard</a>
+      <a routerLink="/donations" (click)="closeMenu()">Donations</a>
+      <a routerLink="/donor/dashboard" (click)="closeMenu()">Dashboard</a>
+      <a routerLink="/leaderboard" (click)="closeMenu()">Leaderboard</a>
       <button class="btn-danger" (click)="logout()">Logout</button>
     </ng-container>
 
     <!-- 🏢 NGO MENU -->
     <ng-container *ngIf="isLoggedIn() && isNgo()">
-      <a routerLink="/ngo/dashboard">NGO Dashboard</a>
+      <a routerLink="/ngo/dashboard" (click)="closeMenu()">NGO Dashboard</a>
       <button class="btn-danger" (click)="logout()">Logout</button>
     </ng-container>
 

@@ -1,3 +1,4 @@
+/* PAGE */
 .dashboard-page {
   background: #f4f6f9;
   min-height: calc(100vh - 80px);
@@ -43,6 +44,12 @@
   border-radius: 14px;
   text-align: center;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.15);
 }
 
 .stat-card.total {
@@ -55,6 +62,22 @@
 
 .stat-card.completed {
   border-top: 4px solid green;
+}
+
+/* CHART */
+.chart-container {
+  margin: 30px auto;
+  max-width: 420px;
+  background: white;
+  padding: 24px;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 240px;
 }
 
 /* TABLE */
@@ -82,6 +105,10 @@ td {
   border-bottom: 1px solid #eee;
 }
 
+table tr:hover {
+  background-color: #f1f6ff;
+}
+
 /* STATUS */
 .status-badge {
   padding: 4px 10px;
@@ -106,48 +133,10 @@ td {
   color: #777;
   margin-top: 20px;
 }
-.card,
-.stat-card,
-.table-container {
-  background: #ffffff;
-  border-radius: 14px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-}
 
-.card:hover,
-.stat-card:hover,
-.table-container:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 14px 28px rgba(0,0,0,0.15);
-}
-table tr:hover {
-  background-color: #f1f6ff;
-}
-.status {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.status.pending {
-  background: #fff3e0;
-  color: #ef6c00;
-}
-
-.status.confirmed {
-  background: #e3f2fd;
-  color: #1976d2;
-}
-
-.status.completed {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-.page,
-.dashboard,
-.contribute-wrapper {
-  animation: fadeIn 0.5s ease-in;
+/* FADE IN */
+.dashboard-page {
+  animation: fadeIn 0.45s ease-in;
 }
 
 @keyframes fadeIn {
@@ -160,12 +149,3 @@ table tr:hover {
     transform: translateY(0);
   }
 }
-/* ===============================
-   CHART SIZE FIX
-================================ */
-
-.chart-container {
-  max-width: 420px;
-  margin: 30px auto;
-}
-

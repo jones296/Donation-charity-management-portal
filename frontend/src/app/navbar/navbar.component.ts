@@ -11,6 +11,8 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent {
+  menuOpen = false; // ✅ MOBILE MENU STATE
+
   constructor(public authService: AuthService, private router: Router) {}
 
   isLoggedIn(): boolean {
@@ -25,8 +27,17 @@ export class NavbarComponent {
     return this.authService.getUserRole() === 'NGO';
   }
 
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  closeMenu(): void {
+    this.menuOpen = false;
+  }
+
   logout(): void {
     this.authService.logout();
+    this.closeMenu();
     this.router.navigate(['/login']);
   }
 }

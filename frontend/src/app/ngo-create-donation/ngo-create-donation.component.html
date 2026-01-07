@@ -1,0 +1,24 @@
+<div class="create-page">
+
+  <h2>Create Donation Request</h2>
+
+  <label>Donation Type</label>
+  <select [(ngModel)]="donation_type">
+    <option value="FOOD">FOOD</option>
+    <option value="CLOTHES">CLOTHES</option>
+  </select>
+
+  <label>Quantity / Amount</label>
+  <input type="number" [(ngModel)]="quantity_or_amount" />
+
+  <label>Location</label>
+  <input type="text" [(ngModel)]="location" />
+
+  <label>Pickup Date & Time</label>
+  <input type="datetime-local" [(ngModel)]="pickup_date_time" />
+
+  <button (click)="submit()" [disabled]="loading">
+    {{ loading ? 'Creating...' : 'Create Request' }}
+  </button>
+
+</div>

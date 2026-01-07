@@ -32,16 +32,17 @@ import { MatSelectModule } from '@angular/material/select';
   styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent {
-  // ✅ loading flag
   loading = false;
 
-  // ✅ role options (OBJECTS, not strings)
+  // ✅ error message shown in UI
+  errorMessage = '';
+
+  // ✅ role options
   roles = [
     { label: 'Donor', value: 'DONOR' },
     { label: 'NGO', value: 'NGO' },
   ];
 
-  // ✅ form declared AFTER constructor usage
   registerForm!: FormGroup;
 
   constructor(
@@ -49,7 +50,6 @@ export class RegisterComponent {
     private authService: AuthService,
     private router: Router
   ) {
-    // ✅ initialize form inside constructor
     this.registerForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -58,10 +58,11 @@ export class RegisterComponent {
     });
   }
 
-  submit() {
+  submit(): void {
     if (this.registerForm.invalid) return;
 
     this.loading = true;
+    this.errorMessage = '';
 
     this.authService.register(this.registerForm.value).subscribe({
       next: () => {
@@ -69,9 +70,12 @@ export class RegisterComponent {
         alert('Account created successfully. Please login.');
         this.router.navigate(['/login']);
       },
-      error: () => {
+      error: (err) => {
         this.loading = false;
-        alert('Registration failed');
+
+        // ✅ Show backend message if available
+        this.errorMessage =
+          err?.error?.message || 'Registration failed. Please try again.';
       },
     });
   }

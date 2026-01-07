@@ -16,7 +16,7 @@ import { AuthService } from '../services/auth.service';
 export class ContributeComponent implements OnInit {
   donationId!: number;
   quantity: number | null = null;
-  pickupDateTime: string = '';
+  pickupDateTime = '';
   loading = false;
 
   constructor(
@@ -27,6 +27,7 @@ export class ContributeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // 🔐 Login check
     if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/login']);
       return;
@@ -43,34 +44,47 @@ export class ContributeComponent implements OnInit {
   }
 
   submitContribution(): void {
-    if (!this.quantity || this.quantity <= 0 || !this.pickupDateTime) {
-      alert('Please enter quantity and pickup date');
+    // ❌ Basic validation
+    if (!this.quantity || this.quantity <= 0) {
+      alert('Please enter a valid quantity');
+      return;
+    }
+
+    if (!this.pickupDateTime) {
+      alert('Please select pickup date & time');
+      return;
+    }
+
+    // ❌ Past date check (frontend safety)
+    const selectedDate = new Date(this.pickupDateTime);
+    if (selectedDate <= new Date()) {
+      alert('Pickup date must be in the future');
       return;
     }
 
     this.loading = true;
 
-    // 1️⃣ Confirm contribution
+    // 1️⃣ Confirm contribution (PARTIAL SUPPORT)
     this.contributionService
       .confirmContribution(this.donationId, this.quantity)
       .subscribe({
         next: () => {
-          // 2️⃣ Schedule pickup
+          // 2️⃣ Schedule pickup (MANDATORY)
           this.contributionService
             .schedulePickup(this.donationId, this.pickupDateTime)
             .subscribe({
               next: () => {
-                alert('Contribution confirmed & pickup scheduled!');
+                alert('Contribution successful & pickup scheduled!');
                 this.router.navigate(['/donor/dashboard']);
               },
-              error: () => {
-                alert('Pickup scheduling failed');
+              error: (err) => {
+                alert(err.error?.message || 'Pickup scheduling failed');
                 this.loading = false;
               },
             });
         },
-        error: () => {
-          alert('Contribution failed');
+        error: (err) => {
+          alert(err.error?.message || 'Contribution failed');
           this.loading = false;
         },
       });

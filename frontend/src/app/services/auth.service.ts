@@ -27,6 +27,15 @@ export class AuthService {
   }
 
   // -------------------------
+  // FORGOT PASSWORD (DELETE ACCOUNT)
+  // -------------------------
+  forgotPassword(email: string) {
+    return this.http.post<any>(`${this.apiUrl}/forgot-password`, {
+      email,
+    });
+  }
+
+  // -------------------------
   // AUTH STORAGE
   // -------------------------
   saveAuth(token: string, user: any): void {
@@ -40,7 +49,7 @@ export class AuthService {
   }
 
   // -------------------------
-  // HELPERS (USED EVERYWHERE)
+  // HELPERS
   // -------------------------
   getToken(): string | null {
     return localStorage.getItem('token');

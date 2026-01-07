@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-// ✅ Angular Material imports (REQUIRED)
+// Angular Material
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -17,8 +17,6 @@ import { AuthService } from '../services/auth.service';
   imports: [
     CommonModule,
     FormsModule,
-
-    // ✅ Material modules
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -30,10 +28,13 @@ import { AuthService } from '../services/auth.service';
 export class LoginComponent {
   email = '';
   password = '';
-  errorMessage = ''; // ✅ FIXED (was missing earlier)
+  errorMessage = '';
 
   constructor(private authService: AuthService, private router: Router) {}
 
+  // -------------------------
+  // LOGIN
+  // -------------------------
   login(): void {
     this.errorMessage = '';
 
@@ -41,7 +42,6 @@ export class LoginComponent {
       next: (res) => {
         this.authService.saveAuth(res.token, res.user);
 
-        // ✅ KEEP YOUR EXISTING ROLE LOGIC
         if (res.user.role === 'DONOR') {
           this.router.navigate(['/donor/dashboard']);
         } else if (res.user.role === 'NGO') {
@@ -50,6 +50,32 @@ export class LoginComponent {
       },
       error: () => {
         this.errorMessage = 'Invalid email or password';
+      },
+    });
+  }
+
+  // -------------------------
+  // FORGOT PASSWORD (DELETE FLOW)
+  // -------------------------
+  forgotPassword(): void {
+    if (!this.email) {
+      alert('Please enter your email first');
+      return;
+    }
+
+    const confirmDelete = confirm(
+      'This will remove your account. You must create a new account. Continue?'
+    );
+
+    if (!confirmDelete) return;
+
+    this.authService.forgotPassword(this.email).subscribe({
+      next: (res) => {
+        alert(res.message);
+        this.router.navigate(['/register']);
+      },
+      error: (err) => {
+        alert(err.error?.message || 'Something went wrong');
       },
     });
   }

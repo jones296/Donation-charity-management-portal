@@ -21,6 +21,11 @@
       Login
     </button>
 
+    <!-- 🔐 FORGOT PASSWORD -->
+    <p class="forgot-link" (click)="forgotPassword()">
+      Forgot Password?
+    </p>
+
     <p class="error" *ngIf="errorMessage">
       {{ errorMessage }}
     </p>

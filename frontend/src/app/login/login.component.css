@@ -25,3 +25,14 @@
   text-align: center;
   margin-top: 10px;
 }
+.forgot-link {
+  margin-top: 12px;
+  text-align: center;
+  color: #1976d2;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}

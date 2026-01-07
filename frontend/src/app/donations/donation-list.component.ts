@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { DonationService, Donation } from '../services/donation.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-donation-list',
@@ -17,6 +18,7 @@ export class DonationListComponent implements OnInit {
 
   constructor(
     private donationService: DonationService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
@@ -24,19 +26,34 @@ export class DonationListComponent implements OnInit {
     this.loadDonations();
   }
 
-  loadDonations() {
+  // ✅ FIXED METHOD CALL
+  loadDonations(): void {
+    this.loading = true;
+
     this.donationService.getAllDonations().subscribe({
-      next: (data) => {
-        this.donations = data;
+      next: (data: Donation[]) => {
+        // ✅ Ensure remaining_quantity exists (fallback for old rows)
+        this.donations = data.map((d) => ({
+          ...d,
+          remaining_quantity: d.remaining_quantity ?? d.quantity_or_amount,
+        }));
+
         this.loading = false;
       },
       error: () => {
+        alert('Failed to load donation requests');
         this.loading = false;
       },
     });
   }
 
-  contribute(id: number) {
-    this.router.navigate(['/contribute', id]);
+  // ✅ Navigate to contribute page
+  contribute(donationId: number): void {
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.router.navigate(['/contribute', donationId]);
   }
 }

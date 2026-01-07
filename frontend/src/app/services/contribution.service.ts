@@ -11,9 +11,7 @@ export class ContributionService {
 
   constructor(private http: HttpClient) {}
 
-  // ---------------------------
-  // 1️⃣ Confirm Contribution
-  // ---------------------------
+  // ✅ Confirm contribution
   confirmContribution(donationId: number, quantity: number): Observable<any> {
     return this.http.post(this.contributionUrl, {
       donation_id: donationId,
@@ -21,9 +19,7 @@ export class ContributionService {
     });
   }
 
-  // ---------------------------
-  // 2️⃣ Schedule Pickup (MANDATORY)
-  // ---------------------------
+  // ✅ Schedule pickup (MANDATORY)
   schedulePickup(donationId: number, pickupDateTime: string): Observable<any> {
     return this.http.post(this.pickupUrl, {
       donation_id: donationId,
@@ -31,9 +27,7 @@ export class ContributionService {
     });
   }
 
-  // ---------------------------
-  // DONOR → My Contributions
-  // ---------------------------
+  // DONOR → My contributions
   getMyContributions(): Observable<any[]> {
     return this.http.get<any[]>(`${this.contributionUrl}/my`);
   }

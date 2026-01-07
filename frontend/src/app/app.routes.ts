@@ -57,8 +57,16 @@ export const routes: Routes = [
         (m) => m.NgoDashboardComponent
       ),
   },
+  {
+    path: 'ngo/create-donation',
+    canActivate: [AuthGuard, NgoGuard],
+    loadComponent: () =>
+      import('./ngo-create-donation/ngo-create-donation.component').then(
+        (m) => m.NgoCreateDonationComponent
+      ),
+  },
 
-  // 🏆 LEADERBOARD (PUBLIC)
+  // LEADERBOARD
   {
     path: 'leaderboard',
     loadComponent: () =>

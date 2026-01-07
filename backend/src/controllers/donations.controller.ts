@@ -1,32 +1,30 @@
 import { Request, Response } from "express";
-import pool from "../config/db";
+import db from "../config/db";
 
-// --------------------------------------------------
-// GET all donations (PUBLIC)
-// --------------------------------------------------
-export const getAllDonations = async (_req: Request, res: Response) => {
+/**
+ * Extend Request to include JWT user
+ */
+interface AuthRequest extends Request {
+  user?: {
+    id: number;
+    role: string;
+  };
+}
+
+/**
+ * --------------------------------------------------
+ * NGO → Create Donation Request
+ * --------------------------------------------------
+ */
+export const createDonation = async (req: AuthRequest, res: Response) => {
   try {
-    const [rows] = await pool.query(`
-      SELECT *
-      FROM donations
-      ORDER BY created_at DESC
-    `);
+    if (!req.user || req.user.role !== "NGO") {
+      return res
+        .status(403)
+        .json({ message: "Only NGOs can create donations" });
+    }
 
-    res.status(200).json(rows);
-  } catch (error) {
-    console.error("❌ Error fetching donations:", error);
-    res.status(500).json({ message: "Failed to fetch donations" });
-  }
-};
-
-// --------------------------------------------------
-// CREATE donation (NGO ONLY)
-// --------------------------------------------------
-export const createDonation = async (
-  req: Request & { user?: { id: number; role: string } },
-  res: Response
-) => {
-  try {
+    const ngoId = req.user.id;
     const { donation_type, quantity_or_amount, location, pickup_date_time } =
       req.body;
 
@@ -36,86 +34,190 @@ export const createDonation = async (
       !location ||
       !pickup_date_time
     ) {
-      return res.status(400).json({ message: "Missing required fields" });
+      return res.status(400).json({ message: "All fields are required" });
     }
 
-    const ngo_id = req.user!.id;
+    if (quantity_or_amount <= 0) {
+      return res
+        .status(400)
+        .json({ message: "Quantity must be greater than zero" });
+    }
 
-    await pool.query(
+    const pickupDate = new Date(pickup_date_time);
+    const now = new Date();
+
+    if (pickupDate <= now) {
+      return res
+        .status(400)
+        .json({ message: "Pickup date must be in the future" });
+    }
+
+    await db.query(
       `
       INSERT INTO donations
-      (ngo_id, donation_type, quantity_or_amount, location, pickup_date_time, status)
-      VALUES (?, ?, ?, ?, ?, 'PENDING')
+      (
+        ngo_id,
+        donation_type,
+        quantity_or_amount,
+        remaining_quantity,
+        location,
+        pickup_date_time,
+        status
+      )
+      VALUES (?, ?, ?, ?, ?, ?, 'PENDING')
       `,
-      [ngo_id, donation_type, quantity_or_amount, location, pickup_date_time]
+      [
+        ngoId,
+        donation_type,
+        quantity_or_amount,
+        quantity_or_amount,
+        location,
+        pickup_date_time,
+      ]
     );
 
-    res.status(201).json({ message: "Donation created successfully" });
+    return res.status(201).json({
+      message: "Donation request created",
+    });
   } catch (error) {
-    console.error("❌ Error creating donation:", error);
-    res.status(500).json({ message: "Failed to create donation" });
+    console.error("CREATE DONATION ERROR:", error);
+    return res.status(500).json({
+      message: "Failed to create donation request",
+    });
   }
 };
 
-// --------------------------------------------------
-// GET donations created by logged-in NGO
-// --------------------------------------------------
-export const getNgoDonations = async (
-  req: Request & { user?: { id: number; role: string } },
-  res: Response
-) => {
+/**
+ * --------------------------------------------------
+ * PUBLIC → View All Active Donation Requests
+ * (Donor page — expired hidden)
+ * --------------------------------------------------
+ */
+export const getAllDonations = async (_req: Request, res: Response) => {
   try {
-    const ngoId = req.user!.id;
-
-    const [rows] = await pool.query(
+    const [rows] = await db.query(
       `
       SELECT *
       FROM donations
-      WHERE ngo_id = ?
+      WHERE remaining_quantity > 0
+        AND pickup_date_time > NOW()
+        AND status IN ('PENDING', 'CONFIRMED')
       ORDER BY created_at DESC
+      `
+    );
+
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error("GET DONATIONS ERROR:", error);
+    res.status(500).json({ message: "Failed to fetch donations" });
+  }
+};
+
+/**
+ * --------------------------------------------------
+ * NGO → View My Donation Requests
+ * (Shows EXPIRED rows)
+ * --------------------------------------------------
+ */
+export const getNgoDonations = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user || req.user.role !== "NGO") {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    const ngoId = req.user.id;
+
+    const [rows] = await db.query(
+      `
+      SELECT
+        id,
+        ngo_id,
+        donation_type,
+        quantity_or_amount,
+        remaining_quantity,
+        location,
+        pickup_date_time,
+        created_at,
+        CASE
+          WHEN pickup_date_time < NOW()
+               AND status = 'PENDING'
+               AND remaining_quantity = quantity_or_amount
+          THEN 'EXPIRED'
+          ELSE status
+        END AS status
+      FROM donations
+      WHERE ngo_id = ?
+      ORDER BY pickup_date_time DESC
       `,
       [ngoId]
     );
 
     res.status(200).json(rows);
   } catch (error) {
-    console.error("❌ Error fetching NGO donations:", error);
+    console.error("GET NGO DONATIONS ERROR:", error);
     res.status(500).json({ message: "Failed to fetch NGO donations" });
   }
 };
 
-// --------------------------------------------------
-// MARK donation as COMPLETED (NGO ONLY)
-// --------------------------------------------------
+/**
+ * --------------------------------------------------
+ * NGO → Mark Donation as COMPLETED
+ * --------------------------------------------------
+ */
 export const markDonationCompleted = async (
-  req: Request & { user?: { id: number; role: string } },
+  req: AuthRequest,
   res: Response
 ) => {
   try {
-    const donationId = req.params.id;
-    const ngoId = req.user!.id;
+    if (!req.user || req.user.role !== "NGO") {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
 
-    const [result]: any = await pool.query(
+    const { id } = req.params;
+
+    const [result]: any = await db.query(
       `
       UPDATE donations
       SET status = 'COMPLETED'
       WHERE id = ?
-        AND ngo_id = ?
+        AND remaining_quantity = 0
         AND status = 'CONFIRMED'
       `,
-      [donationId, ngoId]
+      [id]
     );
 
-    // ✅ SAFETY CHECK (important)
     if (result.affectedRows === 0) {
       return res.status(400).json({
-        message: "Donation not found or not in CONFIRMED state",
+        message: "Donation not eligible for completion",
       });
     }
 
-    res.status(200).json({ message: "Donation marked as COMPLETED" });
+    res.json({ message: "Donation marked as COMPLETED" });
   } catch (error) {
-    console.error("❌ Error marking donation completed:", error);
+    console.error("MARK COMPLETED ERROR:", error);
     res.status(500).json({ message: "Failed to update donation status" });
+  }
+};
+
+/**
+ * --------------------------------------------------
+ * SYSTEM → Mark Expired Donations (CRON JOB)
+ * --------------------------------------------------
+ */
+export const markExpiredDonations = async () => {
+  try {
+    const [result]: any = await db.query(
+      `
+      UPDATE donations
+      SET status = 'EXPIRED'
+      WHERE pickup_date_time < NOW()
+        AND status = 'PENDING'
+        AND remaining_quantity = quantity_or_amount
+      `
+    );
+
+    console.log(`⏰ Marked ${result.affectedRows} donations as EXPIRED`);
+  } catch (error) {
+    console.error("❌ EXPIRE ERROR:", error);
   }
 };

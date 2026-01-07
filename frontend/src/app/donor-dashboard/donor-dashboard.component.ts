@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { ContributionService } from '../services/contribution.service';
 import { AuthService } from '../services/auth.service';
 
-// ✅ Chart.js
+// Chart.js
 import Chart from 'chart.js/auto';
 
 @Component({
@@ -46,7 +46,6 @@ export class DonorDashboardComponent implements OnInit {
     this.loadMyContributions();
   }
 
-  // ✅ ONLY DONOR’S CONTRIBUTIONS
   loadMyContributions(): void {
     this.loading = true;
 
@@ -63,8 +62,6 @@ export class DonorDashboardComponent implements OnInit {
         ).length;
 
         this.loading = false;
-
-        // ✅ Render chart after data loads
         setTimeout(() => this.renderChart(), 0);
       },
       error: () => {
@@ -74,35 +71,41 @@ export class DonorDashboardComponent implements OnInit {
     });
   }
 
-  // 📊 Chart.js
   renderChart(): void {
     const canvas = document.getElementById(
       'donationChart'
     ) as HTMLCanvasElement;
-
     if (!canvas) return;
 
-    // Destroy old chart if exists
     if (this.chart) {
       this.chart.destroy();
     }
 
     this.chart = new Chart(canvas, {
-      type: 'bar',
+      type: 'doughnut',
       data: {
-        labels: ['Pending', 'Completed'],
+        labels: ['Completed', 'Pending'],
         datasets: [
           {
-            label: 'Contributions',
-            data: [this.stats.pending, this.stats.completed],
-            backgroundColor: ['#ffa726', '#66bb6a'],
+            data: [this.stats.completed, this.stats.pending],
+            backgroundColor: ['#2e7d32', '#ffa726'],
+            borderWidth: 0,
           },
         ],
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
+        cutout: '70%',
+        animation: {
+          animateScale: true,
+          animateRotate: true,
+          duration: 1000,
+        },
         plugins: {
-          legend: { display: false },
+          legend: {
+            position: 'bottom',
+          },
         },
       },
     });

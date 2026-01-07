@@ -6,7 +6,8 @@ import { Observable } from 'rxjs';
  * ✅ MUST MATCH BACKEND RESPONSE
  */
 export interface LeaderboardEntry {
-  name: string;
+  donor_id: number;
+  donor_name: string;
   total_contributions: number;
 }
 
